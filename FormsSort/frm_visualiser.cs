@@ -22,11 +22,11 @@ namespace FormsSort
         }
         int num_elements;
         int[] elements;
-        int rect_width;
         int checking_index;
         Random rng = new Random();
         algorithm algo;
         algorithm[] algos;
+        Thread sort_thread;
         public frm_visualiser(int n)
         {
             InitializeComponent();
@@ -42,7 +42,6 @@ namespace FormsSort
             {
                 elements[i] = i;
             }
-            rect_width = Width / elements.Length;
             scramble(elements);
         }
         
@@ -50,24 +49,44 @@ namespace FormsSort
         {
             e.Graphics.Clear(Color.Black);
             e.Graphics.DrawString(algo.ToString(), new Font("Verdana", 12.0f), new SolidBrush(Color.AliceBlue), 0, 0);
-            for(int i = 0; i < elements.Length; i++)
+            for(int i = 1; i < elements.Length - 1; i++)
             {
+                Rectangle element_box = new Rectangle();
+                double h, w;
+                h = -Math.Ceiling((double)Height * (double)elements[i] / (double)elements.Length);
+                if (elements.Length < Width)
+                {
+                    w = Width / elements.Length;
+                    //need to make it fit exactly
+                    /*double diff = ((w * elements.Length) - Width);
+                    w = w * w % diff;*/
+                }
+                else w = 1;
+                element_box.Width = (int)Math.Ceiling(w);
+                element_box.Height = Height;
+                element_box.X = i * element_box.Width;
+                element_box.Y = Height + (int)h;
                 if (checking_index == i)
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(Color.Red), i * rect_width, Height - elements[i] * 10, rect_width, elements[i] * 10);
+                    e.Graphics.FillRectangle(new SolidBrush(Color.Red), element_box);
                 }
                 else
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(Color.White), i * rect_width, Height - elements[i] * 10, rect_width, elements[i] * 10);
+                    e.Graphics.FillRectangle(new SolidBrush(Color.White), element_box);
                 }
-                e.Graphics.DrawString(elements[i].ToString(), new Font("Verdana", 6.0f), new SolidBrush(Color.Black), i * rect_width, Height - elements[i] * 10);
             }
+        }
+        private void beep()
+        {
+            int freq = 4000 + (elements[checking_index] * 10);
+            int duration = 1000 / 60;
+            System.Console.Beep(freq, duration);
         }
 
         private void bogosort(int[] arr)
         {
             int n = arr.Length;
-            while(is_sorted(arr) == false)
+            while(!is_sorted(arr))
             {
                 scramble(arr);
             }
@@ -79,7 +98,7 @@ namespace FormsSort
             for(int i = 0; i < n - 1; i++)
             {
                 checking_index = i;
-                Thread.Sleep(10);
+                beep();
                 if (arr[i] > arr[i+1])
                 {
                     return false;
@@ -94,9 +113,11 @@ namespace FormsSort
             for (int i = 0; i < n; i++)
             {
                 checking_index = i;
+                beep();
                 for (int j = 0; j < n - i - 1; j++)
                 {
-                    Thread.Sleep(10);
+                    checking_index = j;
+                    beep();
                     if (arr[j] > arr[j + 1])
                     {
                         //swap them
@@ -110,6 +131,7 @@ namespace FormsSort
 
         private void mergesort(int[] arr)
         {
+            //kind of broke
             if(arr.Length > 1)
             {
                 int n = arr.Length;
@@ -118,13 +140,10 @@ namespace FormsSort
                 int[] r = new int[n - mid];
                 for (int i = 0; i < mid; i++)
                 {
-                    
                     l[i] = arr[i];
                 }
                 for(int i = 0; i < n - mid; i++)
                 {
-                    checking_index = i;
-                    Thread.Sleep(10);
                     r[i] = arr[mid + i];
                 }
 
@@ -169,7 +188,7 @@ namespace FormsSort
             for(int j = low; j < high; j++)
             {
                 checking_index = j;
-                Thread.Sleep(10);
+                beep();
                 if (arr[j] < pivot)
                 {
                     i++;
@@ -201,9 +220,9 @@ namespace FormsSort
             int n = arr.Length;
             while (n > 1)
             {
-                Thread.Sleep(10);
                 int k = rng.Next(n--);
                 checking_index = k;
+                beep();
                 T temp = arr[n];
                 arr[n] = arr[k];
                 arr[k] = temp;
@@ -219,31 +238,39 @@ namespace FormsSort
         {
             if(e.KeyCode == Keys.Enter)
             {
+                if (sort_thread != null)
+                {
+                    sort_thread.Abort();
+                }
                 if (algo == algorithm.bubblesort)
                 {
-                    Thread thread = new Thread(() => bubblesort(elements));
-                    thread.Start();
+                    sort_thread = new Thread(() => bubblesort(elements));
+                    sort_thread.Start();
                 }
                 else if(algo == algorithm.mergesort)
                 {
-                    Thread thread = new Thread(() => mergesort(elements));
-                    thread.Start();
+                    sort_thread = new Thread(() => mergesort(elements));
+                    sort_thread.Start();
                 }
                 else if (algo == algorithm.quicksort)
                 {
-                    Thread thread = new Thread(() => quicksort(elements, 0, elements.Length-1));
-                    thread.Start();
+                    sort_thread = new Thread(() => quicksort(elements, 0, elements.Length-1));
+                    sort_thread.Start();
                 }
                 else if (algo == algorithm.bogosort)
                 {
-                    Thread thread = new Thread(() => bogosort(elements));
-                    thread.Start();
+                    sort_thread = new Thread(() => bogosort(elements));
+                    sort_thread.Start();
                 }
             }
             if(e.KeyCode == Keys.Back)
             {
-                Thread thread = new Thread(() => scramble(elements));
-                thread.Start();
+                if (sort_thread != null)
+                {
+                    sort_thread.Abort();
+                }
+                sort_thread = new Thread(() => scramble(elements));
+                sort_thread.Start();
             }
             if(e.KeyCode == Keys.Right)
             {

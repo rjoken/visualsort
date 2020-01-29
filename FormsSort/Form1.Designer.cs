@@ -39,7 +39,12 @@
             this.nud_amt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.nud_amt.Location = new System.Drawing.Point(12, 12);
             this.nud_amt.Maximum = new decimal(new int[] {
-            10000,
+            800,
+            0,
+            0,
+            0});
+            this.nud_amt.Minimum = new decimal(new int[] {
+            8,
             0,
             0,
             0});
