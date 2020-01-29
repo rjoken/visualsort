@@ -79,9 +79,16 @@ namespace FormsSort
         }
         private void beep()
         {
-            int freq = 4000 + (elements[checking_index] * 10);
-            int duration = 1000 / 60;
+            int freq = 2000 + (elements[checking_index] * 10);
+            int duration = 10;
             System.Console.Beep(freq, duration);
+        }
+
+        private void swap(int[] arr, int a, int b)
+        {
+            int tmp = arr[b];
+            arr[b] = arr[a];
+            arr[a] = tmp;
         }
 
         private void bogosort(int[] arr)
@@ -122,9 +129,7 @@ namespace FormsSort
                     if (arr[j] > arr[j + 1])
                     {
                         //swap them
-                        int tmp = arr[j + 1];
-                        arr[j + 1] = arr[j];
-                        arr[j] = tmp;
+                        swap(arr, j, j + 1);
                     }
                 }
             }
@@ -193,14 +198,10 @@ namespace FormsSort
                 if (arr[j] < pivot)
                 {
                     i++;
-                    int temp = arr[j];
-                    arr[j] = arr[i];
-                    arr[i] = temp;
+                    swap(arr, i, j);
                 }
             }
-            int tmp = arr[high];
-            arr[high] = arr[i+1];
-            arr[i+1] = tmp;
+            swap(arr, i + 1, high);
             return i + 1;
         }
 
@@ -279,6 +280,8 @@ namespace FormsSort
             //countsort for every digit. exp is 10^i where i is current digit
             for(int exp = 1; m/exp > 0; exp *= 10)
             {
+                checking_index = m;
+                beep();
                 countingsort(arr, exp);
             }
         }
