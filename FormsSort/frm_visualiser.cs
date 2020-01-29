@@ -18,7 +18,8 @@ namespace FormsSort
             bubblesort,
             mergesort,
             quicksort,
-            bogosort
+            bogosort,
+            radixsort
         }
         int num_elements;
         int[] elements;
@@ -35,7 +36,7 @@ namespace FormsSort
             refresh.Interval = 1000 / 60;
             refresh.Enabled = true;
             algo = algorithm.bubblesort;
-            algos = new algorithm[4] { algorithm.bubblesort, algorithm.mergesort, algorithm.quicksort, algorithm.bogosort };
+            algos = new algorithm[5] { algorithm.bubblesort, algorithm.mergesort, algorithm.quicksort, algorithm.bogosort, algorithm.radixsort };
             num_elements = n;
             elements = new int[num_elements];
             for(int i = 0; i < elements.Length; i++)
@@ -215,6 +216,73 @@ namespace FormsSort
             }
         }
 
+        private void countingsort(int[] arr, int exp)
+        {
+            int n = arr.Length;
+            int i;
+            int[] output = new int[n];
+            int[] count = new int[10];
+            for (i = 0; i < 10; i++)
+            {
+                count[i] = 0;
+            }
+
+            //count occurrences
+            for(i = 0; i < n; i++)
+            {
+                checking_index = i;
+                beep();
+                count[(arr[i] / exp) % 10]++;
+            }
+
+            //count[i] to contain position of digit in output
+            for(i = 1; i < 10; i++)
+            {
+                count[i] += count[i - 1];
+            }
+
+            //build output
+            for(i = n - 1; i >= 0; i--)
+            {
+                checking_index = i;
+                beep();
+                output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+                count[(arr[i] / exp) % 10]--;
+            }
+
+            //copy into arr
+            for(i = 0; i < n; i++)
+            {
+                checking_index = i;
+                beep();
+                arr[i] = output[i];
+            }
+        }
+
+        int get_max(int[] arr)
+        {
+            int max = arr[0];
+            for(int i = 0; i < arr.Length; i++)
+            {
+                if(arr[i] > max)
+                {
+                    max = arr[i];
+                }
+            }
+            return max;
+        }
+
+        void radixsort(int[] arr)
+        {
+            int m = get_max(arr);
+
+            //countsort for every digit. exp is 10^i where i is current digit
+            for(int exp = 1; m/exp > 0; exp *= 10)
+            {
+                countingsort(arr, exp);
+            }
+        }
+
         private void scramble<T> (T[] arr)
         {
             int n = arr.Length;
@@ -260,6 +328,11 @@ namespace FormsSort
                 else if (algo == algorithm.bogosort)
                 {
                     sort_thread = new Thread(() => bogosort(elements));
+                    sort_thread.Start();
+                }
+                else if (algo == algorithm.radixsort)
+                {
+                    sort_thread = new Thread(() => radixsort(elements));
                     sort_thread.Start();
                 }
             }
