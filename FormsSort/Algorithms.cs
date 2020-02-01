@@ -38,12 +38,10 @@ namespace FormsSort
             int n = arr.Length;
             for (int i = 0; i < n; i++)
             {
-                checking_index = i;
-                beep();
+                update_algo(i);
                 for (int j = 0; j < n - i - 1; j++)
                 {
-                    checking_index = j;
-                    beep();
+                    update_algo(j);
                     if (arr[j] > arr[j + 1])
                     {
                         //swap them
@@ -72,8 +70,7 @@ namespace FormsSort
             //countsort for every digit. exp is 10^i where i is current digit
             for (int exp = 1; m / exp > 0; exp *= 10)
             {
-                checking_index = m;
-                beep();
+                update_algo(m);
                 countingsort(arr, exp);
             }
         }
@@ -93,8 +90,7 @@ namespace FormsSort
             //count occurrences
             for (i = 0; i < n; i++)
             {
-                checking_index = i;
-                beep();
+                update_algo(i);
                 count[(arr[i] / exp) % 10]++;
             }
 
@@ -107,8 +103,7 @@ namespace FormsSort
             //build output
             for (i = n - 1; i >= 0; i--)
             {
-                checking_index = i;
-                beep();
+                update_algo(i);
                 output[count[(arr[i] / exp) % 10] - 1] = arr[i];
                 count[(arr[i] / exp) % 10]--;
             }
@@ -116,20 +111,25 @@ namespace FormsSort
             //copy into arr
             for (i = 0; i < n; i++)
             {
-                checking_index = i;
-                beep();
+                update_algo(i);
                 arr[i] = output[i];
             }
         }
 
         /* utility functions */
+
+        private static void update_algo(int index)
+        {
+            checking_index = index;
+            beep();
+        }
+
         private static bool is_sorted(int[] arr)
         {
             int n = arr.Length;
             for (int i = 0; i < n - 1; i++)
             {
-                checking_index = i;
-                beep();
+                update_algo(i);
                 if (arr[i] > arr[i + 1])
                 {
                     return false;
@@ -151,8 +151,7 @@ namespace FormsSort
             int pivot = arr[high];
             for (int j = low; j < high; j++)
             {
-                checking_index = j;
-                beep();
+                update_algo(j);
                 if (arr[j] < pivot)
                 {
                     i++;
@@ -183,8 +182,7 @@ namespace FormsSort
             while (n > 1)
             {
                 int k = rng.Next(n--);
-                checking_index = k;
-                beep();
+                update_algo(k);
                 T temp = arr[n];
                 arr[n] = arr[k];
                 arr[k] = temp;
