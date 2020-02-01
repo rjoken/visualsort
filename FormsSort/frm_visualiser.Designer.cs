@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.refresh = new System.Windows.Forms.Timer(this.components);
+            this.timer_refresh = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
-            // refresh
+            // timer_refresh
             // 
-            this.refresh.Tick += new System.EventHandler(this.refresh_Tick);
+            this.timer_refresh.Tick += new System.EventHandler(this.timer_refresh_Tick);
             // 
             // frm_visualiser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(792, 573);
+            this.ClientSize = new System.Drawing.Size(794, 575);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(800, 600);
@@ -55,6 +55,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Timer refresh;
+        private System.Windows.Forms.Timer timer_refresh;
     }
 }
