@@ -1,7 +1,7 @@
 # visualsort
 A sorting algorithm visualiser
 
-needs work.
+![screenshot of radixsort](https://puu.sh/F65bx.png)
 
 arrow keys to change sorting method, backspace to scramble, enter to sort.
-currently implemented algorithms are bubblesort, mergesort, quicksort and bogosort (lol)
+currently implemented algorithms are bubblesort, quicksort, radixsort (LSD) and bogosort (lol)
